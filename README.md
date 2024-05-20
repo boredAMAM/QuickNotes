@@ -1,1 +1,1 @@
-# QuickNotes
+This repository contains a Flask application designed for managing notes through basic CRUD operations - Create, Retrieve, Update, Delete. It utilizes an in-memory list for storing note data, making it a lightweight solution for note management. The application is configured to run on port 5000 and provides endpoints for each of the CRUD operations, facilitating the easy management of notes through a RESTful API.
