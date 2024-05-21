@@ -1,15 +1,29 @@
 from flask import Flask, request, jsonify
+from datetime import datetime
+
 app = Flask(__name__)
 
 notes = []
 
 @app.route('/notes', methods=['GET'])
 def get_notes():
-    return jsonify(notes)
+    tag = request.args.get('tag', None)
+    search_query = request.args.get('query', None)
+    filtered_notes = notes
+    
+    if tag:
+        filtered_notes = [note for note in filtered_notes if tag in note.get('tags', [])]
+
+    if search_query:
+        filtered_notes = [note for note in filtered_notes if search_query.lower() in note.get('text', '').lower()]
+    
+    return jsonify(filtered_notes)
 
 @app.route('/notes', methods=['POST'])
 def add_note():
     note = request.json
+    note['created_at'] = datetime.now().isoformat()
+    note['modified_at'] = datetime.now().isoformat()
     notes.append(note)
     return jsonify(note), 201
 
@@ -27,6 +41,7 @@ def update_note(note_id):
     if note:
         update_data = request.json
         note.update(update_data)
+        note['modified_at'] = datetime.now().isoformat()  # Update modification time
         return jsonify(note)
     else:
         return jsonify({"error": "Note not found"}), 404
