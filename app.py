@@ -9,6 +9,7 @@ notes = []
 def get_notes():
     tag = request.args.get('tag', None)
     search_query = request.args.get('query', None)
+    show_archived = request.args.get('archived', 'false').lower() == 'true'
     filtered_notes = notes
     
     if tag:
@@ -16,6 +17,9 @@ def get_notes():
 
     if search_query:
         filtered_notes = [note for note in filtered_notes if search_query.lower() in note.get('text', '').lower()]
+
+    if not show_archived:
+        filtered_notes = [note for note in filtered_notes if not note.get('archived', False)]
     
     return jsonify(filtered_notes)
 
@@ -24,6 +28,7 @@ def add_note():
     note = request.json
     note['created_at'] = datetime.now().isoformat()
     note['modified_at'] = datetime.now().isoformat()
+    note['archived'] = False
     notes.append(note)
     return jsonify(note), 201
 
@@ -41,7 +46,27 @@ def update_note(note_id):
     if note:
         update_data = request.json
         note.update(update_data)
-        note['modified_at'] = datetime.now().isoformat()  # Update modification time
+        note['modified_at'] = datetime.now().isoformat()
+        return jsonify(note)
+    else:
+        return jsonify({"error": "Note not found"}), 404
+
+@app.route('/notes/<int:note_id>/archive', methods=['PUT'])
+def archive_note(note_id):
+    note = next((note for note in notes if note['id'] == note_id), None)
+    if note:
+        note['archived'] = True
+        note['modified_at'] = datetime.now().isoformat()
+        return jsonify(note)
+    else:
+        return jsonify({"error": "Note not found"}), 404
+
+@app.route('/notes/<int:note_id>/unarchive', methods=['PUT'])
+def unarchive_note(note_id):
+    note = next((note for note in notes if note['id'] == note_id), None)
+    if note:
+        note['archived'] = False
+        note['modified_at'] = datetime.now().isoformat()
         return jsonify(note)
     else:
         return jsonify({"error": "Note not found"}), 404
