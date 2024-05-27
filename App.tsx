@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import NoteForm from './NoteForm'; 
-import NoteList from './NoteList'; 
+import React, { useState } from 'react';
+import NoteForm from './NoteForm';
+import NoteList from './NoteList';
 
 interface Note {
   id: string;
@@ -12,11 +12,11 @@ const MainComponent: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
 
   const addNote = (note: Note) => {
-    setNotes([...notes, note]);
+    setNotes((prevNotes) => [...prevNotes, note]);
   };
 
   const deleteNote = (id: string) => {
-    setNotes(notes.filter(note => note.id !== id));
+    setNotes((prevNotes) => prevNotes.filter(note => note.id !== id));
   };
 
   return (
