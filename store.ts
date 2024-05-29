@@ -1,14 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import notesReducer from './features/notes/notesSlice';
+import notesFeatureReducer from './features/notes/notesSlice';
 
-const store = configureStore({
+const notesAppStore = configureStore({
   reducer: {
-    notes: notesReducer,
+    notes: notesFeatureReducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
 });
 
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof notesAppStore.getState>;
+export type NotesAppDispatch = typeof notesAppStore.dispatch;
 
-export default store;
+export default notesAppStore;
