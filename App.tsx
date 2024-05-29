@@ -10,13 +10,30 @@ interface Note {
 
 const MainComponent: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+  const [editingNote, setEditingNote] = useState<Note | null>(null); // To hold the note being edited.
 
   const addNote = (note: Note) => {
-    setNotes((prevNotes) => [...prevNotes, note]);
+    if (editingNote) {
+      // If we are editing an existing note, update it
+      setNotes((prevNotes) =>
+        prevNotes.map((prevNote) =>
+          prevNote.id === note.id ? note : prevNote
+        )
+      );
+      setEditingNote(null); // Reset editing note after update
+    } else {
+      // Otherwise, add a new note
+      setNotes((prevNotes) => [...prevNotes, note]);
+    }
   };
 
   const deleteNote = (id: string) => {
     setNotes((prevNotes) => prevNotes.filter(note => note.id !== id));
+  };
+
+  const startEditingNote = (id: string) => {
+    const noteToEdit = notes.find(note => note.id === id);
+    setEditingNote(noteToEdit ?? null);
   };
 
   return (
@@ -24,8 +41,8 @@ const MainComponent: React.FC = () => {
       <nav>
         <h1>Note Taking App</h1>
       </nav>
-      <NoteForm onAddNote={addNote} />
-      <NoteList notes={notes} onDeleteNote={deleteNote} />
+      <NoteForm onAddNote={addNote} editingNote={editingNote} />
+      <NoteList notes={notes} onDeleteNote={deleteNote} onEditNote={startEditingNote} />
     </div>
   );
 };
