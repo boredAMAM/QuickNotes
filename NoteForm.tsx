@@ -8,19 +8,19 @@ interface Note {
 }
 
 const AddNoteForm: React.FC = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [error, setError] = useState('');
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
+  const [submissionError, setSubmissionError] = useState('');
   const dispatch = useDispatch();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setError('');
+    setSubmissionError('');
 
     const newNote: Note = {
-      title,
-      content,
+      title: noteTitle,
+      content: noteContent,
     };
 
     try {
@@ -28,39 +28,39 @@ const AddNoteForm: React.FC = () => {
 
       await axios.post(`${process.env.REACT_APP_API_URL}/notes`, newNote);
 
-      setTitle('');
-      setContent('');
+      setNoteTitle('');
+      setNoteContent('');
     } catch (error) {
       console.error('Failed to save the note:', error);
-      setError('Failed to save the note. Please try again.'); 
+      setSubmissionError('Failed to save the note. Please try again.'); 
     }
   };
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleFormSubmit}>
         <div>
           <label htmlFor="title">Title:</label>
           <input
             type="text"
             id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={noteTitle}
+            onChange={(e) => setNoteTitle(e.target.value)}
           />
         </div>
         <div>
           <label htmlFor="content">Content:</label>
           <textarea
             id="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={noteContent}
+            onChange={(e) => setNoteContent(e.target.value)}
           />
         </div>
         <button type="submit">Add Note</button>
       </form>
-      {error && (
+      {submissionError && (
         <div style={{ color: 'red', marginTop: '10px' }}>
-          {error}
+          {submissionError}
         </div>
       )}
     </>
