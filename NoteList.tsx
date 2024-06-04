@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from './store/types';
 import { deleteNote, editNote } from './store/actions';
@@ -32,22 +32,35 @@ const NoteItem: React.FC<NoteItemProps> = ({ id, title, content }) => {
     <li>
       <h3>{title}</h3>
       <p>{content}</p>
-      <button onClick={handleEdit}>Edit</button>
-      <button onClick={handleDelete}>Delete</button>
+      <button onClick={handleEdit}>Edit</Button>
+      <button onClick={handleDelete}>Entfernen</Button>
     </li>
   );
 };
 
 const NotesList: React.FC = () => {
   const notes = useSelector((state: AppState) => state.notes);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredNotes = notes.filter(note => 
+    note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    note.content.toLowerCase().includes(searchTerm.toLowerCase()));
 
   return (
-    <ul>
-      {notes.map(note => (
-        <NoteItem key={note.id} {...note} />
-      ))}
-    </ul>
+    <div>
+      <input 
+        type="text" 
+        placeholder="Search notes" 
+        value={searchTerm} 
+        onChange={(e) => setSearchTerm(e.target.value)} 
+      />
+      <ul>
+        {filteredNotes.map(note => (
+          <NoteItem key={note.id} {...note} />
+        ))}
+      </ul>
+    </div>
   );
 };
 
-export default Notes+List;
+export default NotesList;
