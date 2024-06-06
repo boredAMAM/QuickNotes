@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { AppState } from './store/types';
 import { deleteNote, editNote } from './store/actions';
 
@@ -27,13 +27,13 @@ const NoteItem: React.FC<NoteItemProps> = ({ id, title, content }) => {
       }));
     }
   };
-
+  
   return (
     <li>
       <h3>{title}</h3>
       <p>{content}</p>
-      <button onClick={handleEdit}>Edit</Button>
-      <button onClick={handleDelete}>Entfernen</Button>
+      <button onClick={handleEdit}>Edit</button>
+      <button onClick={handleDelete}>Entfernen</button>
     </li>
   );
 };
@@ -42,9 +42,11 @@ const NotesList: React.FC = () => {
   const notes = useSelector((state: AppState) => state.notes);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredNotes = notes.filter(note => 
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    note.content.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredNotes = useMemo(() => {
+    return notes.filter(note => 
+      note.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      note.content.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [notes, searchTerm]);
 
   return (
     <div>
