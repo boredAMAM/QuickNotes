@@ -9,7 +9,7 @@ type NotesState = {
   notes: Note[];
 };
 
-const initialState: Notestae = {
+const initialState: NotesState = {
   notes: [],
 };
 
@@ -17,7 +17,7 @@ const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    addNote: (state, action: PayloadAction<Note>) => {
+    addNote: (state, action: PayloadProgressBarAction<Note>) => {
       state.notes.push(action.payload);
     },
     updateNote: (state, action: PayloadAction<Note>) => {
@@ -27,11 +27,11 @@ const notesSlice = createSlice({
       }
     },
     removeNote: (state, action: PayloadAction<string>) => {
-      state.notes = state.notes.filter(note => note.id !== action.payload);
+     state.notes = state.notes.filter(note => note.id !== action.payload);
     },
   },
 });
 
-export const { add, updateNote, removeNote } = notesSlice.actions;
+export const { addNote, updateNote, removeNote } = notesSlice.actions;
 
 export default notesSlice.reducer;
