@@ -1,8 +1,8 @@
-// ErrorBoundary.tsx
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
+  onReset?: () => void; 
 }
 
 interface State {
@@ -15,19 +15,26 @@ class ErrorBoundary extends Component<Props, State> {
   };
 
   public static getDerivedStateFromError(_: Error): State {
-    // Update state so the next render will show the fallback UI.
     return { hasError: true };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // You can also log the error to an error reporting service
     console.error("Uncaught error:", error, errorInfo);
   }
 
+  public resetErrorBoundary = () => {
+    this.setState({ hasError: false });
+    if (this.props.onReset) this.props.onReset();
+  };
+
   public render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
+      return (
+        <div>
+          <h1>Something went wrong.</h1>
+          <button onClick={this.resetErrorBoundary}>Try Again</button>
+        </div>
+      );
     }
 
     return this.props.children;
@@ -36,15 +43,20 @@ class ErrorBoundary extends Component<Props, State> {
 
 export default ErrorBoundary;
 ```
+
 ```typescript
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import ErrorBoundary from './ErrorBoundary'; // Ensure the path is correct based on your project structure
+import ErrorBoundary from './ErrorBoundary';
+
+const handleReset = () => {
+  console.log('Resetting error state and any necessary app state.');
+};
 
 ReactDOM.render(
   <React.StrictMode>
-    <ErrorBoundary>
+    <ErrorBoundary onReset={handleModeReset}>
       <App />
     </ErrorBoundary>
   </React.StrictMode>,
